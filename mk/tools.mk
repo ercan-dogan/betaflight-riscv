@@ -384,3 +384,80 @@ picotool_clean:
 	$(V1) [ ! -d "$(PICOTOOL_DIR)" ] || $(RM) -rf $(PICOTOOL_DIR)
 	@echo " CLEAN        $(PICOTOOL_DL_DIR)"
 	$(V1) [ ! -d "$(PICOTOOL_DL_DIR)" ] || $(RM) -rf $(PICOTOOL_DL_DIR)
+
+##############################
+#
+# RISC-V SDK (riscv-none-elf-gcc) via xPack
+#
+##############################
+
+.PHONY: riscv_sdk_install riscv_sdk_download riscv_sdk_clean riscv_sdk_version
+
+# source: xPack GNU RISC-V Embedded GCC (portable archives)
+# naming examples are documented by xPack:
+#   xpack-riscv-none-elf-gcc-15.2.0-1-linux-x64.tar.gz
+#   xpack-riscv-none-elf-gcc-15.2.0-1-darwin-x64.tar.gz
+#   xpack-riscv-none-elf-gcc-15.2.0-1-win32-x64.zip
+# (adjust version if you want)
+RISCV_SDK_XPACK_VER := 15.2.0-1
+RISCV_GCC_REQUIRED_VERSION ?= 15.2.0
+
+ifeq ($(OSFAMILY)-$(ARCHFAMILY), linux-x86_64)
+  RISCV_SDK_FILE := xpack-riscv-none-elf-gcc-$(RISCV_SDK_XPACK_VER)-linux-x64.tar.gz
+else ifeq ($(OSFAMILY)-$(ARCHFAMILY), linux-arm64)
+  RISCV_SDK_FILE := xpack-riscv-none-elf-gcc-$(RISCV_SDK_XPACK_VER)-linux-arm64.tar.gz
+else ifeq ($(OSFAMILY)-$(ARCHFAMILY), macosx-x86_64)
+  RISCV_SDK_FILE := xpack-riscv-none-elf-gcc-$(RISCV_SDK_XPACK_VER)-darwin-x64.tar.gz
+else ifeq ($(OSFAMILY)-$(ARCHFAMILY), macosx-arm64)
+  RISCV_SDK_FILE := xpack-riscv-none-elf-gcc-$(RISCV_SDK_XPACK_VER)-darwin-arm64.tar.gz
+else ifeq ($(OSFAMILY), windows)
+  RISCV_SDK_FILE := xpack-riscv-none-elf-gcc-$(RISCV_SDK_XPACK_VER)-win32-x64.zip
+else
+  $(error No RISC-V toolchain defined for $(OSFAMILY)-$(ARCHFAMILY))
+endif
+
+RISCV_SDK_URL := https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v$(RISCV_SDK_XPACK_VER)/$(RISCV_SDK_FILE)
+
+RISCV_SDK_DIR := $(TOOLS_DIR)/xpack-riscv-none-elf-gcc-$(RISCV_SDK_XPACK_VER)
+
+RISCV_SDK_INSTALL_MARKER := $(RISCV_SDK_DIR)/.installed
+
+riscv_sdk_version: | $(RISCV_SDK_DIR)
+	$(V1) $(RISCV_SDK_DIR)/bin/riscv-none-elf-gcc --version
+
+riscv_sdk_install: | $(TOOLS_DIR)
+riscv_sdk_install: riscv_sdk_download $(RISCV_SDK_INSTALL_MARKER)
+
+$(RISCV_SDK_INSTALL_MARKER): $(DL_DIR)/$(RISCV_SDK_FILE)
+ifeq ($(OSFAMILY), windows)
+	$(V1) unzip -q -d $(TOOLS_DIR) "$<"
+else
+	$(V1) tar -C $(TOOLS_DIR) -xf "$<"
+endif
+	$(V1) touch $(RISCV_SDK_INSTALL_MARKER)
+
+riscv_sdk_download: | $(DL_DIR)
+riscv_sdk_download: $(DL_DIR)/$(RISCV_SDK_FILE)
+
+$(DL_DIR)/$(RISCV_SDK_FILE):
+	$(V1) curl -L -k -o "$@" $(if $(wildcard $@), -z "$@",) "$(RISCV_SDK_URL)"
+
+riscv_sdk_clean:
+	$(V1) [ ! -d "$(RISCV_SDK_DIR)" ] || $(RM) -r $(RISCV_SDK_DIR)
+	$(V1) [ ! -f "$(DL_DIR)/$(RISCV_SDK_FILE)" ] || $(RM) -f "$(DL_DIR)/$(RISCV_SDK_FILE)"
+
+# Set up paths to tools
+
+ifeq ($(shell [ -d "$(RISCV_SDK_DIR)" ] && echo "exists"), exists)
+  RISCV_SDK_PREFIX := $(RISCV_SDK_DIR)/bin/riscv-none-elf-
+else ifeq (,$(filter %_sdk %_install test% clean% %-print checks help configs, $(MAKECMDGOALS)))
+  RISCV_GCC_VERSION = $(shell riscv-none-elf-gcc -dumpversion)
+  ifeq ($(RISCV_GCC_VERSION),)
+    $(error **ERROR** riscv-none-elf-gcc not in the PATH. Run 'make riscv_sdk_install' to install automatically in the tools folder of this repo)
+  else ifneq ($(RISCV_GCC_VERSION), $(RISCV_GCC_REQUIRED_VERSION))
+    $(error **ERROR** your riscv-none-elf-gcc is '$(RISCV_GCC_VERSION)', but '$(RISCV_GCC_REQUIRED_VERSION)' is expected. Override with 'RISCV_GCC_REQUIRED_VERSION' in mk/local.mk or run 'make riscv_sdk_install' to install the right version automatically in the tools folder of this repo)
+  endif
+
+  # RISC-V toolchain is in the path, and the version is what's required.
+  RISCV_SDK_PREFIX ?= riscv-none-elf-
+endif
