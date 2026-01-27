@@ -32,24 +32,20 @@
 #define GET32
 #endif
 
-#define USE_I2C_DEVICE_1
-#define USE_I2C_DEVICE_2
-#define USE_I2C_DEVICE_3
-
-#define USE_VCP
+#undef USE_DMA
+//[ED] #define USE_VCP
 
 #define USE_UART1
 #define USE_UART2
 #define USE_UART3
 #define USE_UART4
-#define USE_UART5
-#define USE_UART6
 
 #define USE_INVERTER
 
 #define USE_SPI_DEVICE_1
 #define USE_SPI_DEVICE_2
 #define USE_SPI_DEVICE_3
+#define USE_SPI_DEVICE_4
 
 #define TARGET_IO_PORTA 0xffff
 #define TARGET_IO_PORTB 0xffff
@@ -59,8 +55,13 @@
 #define TARGET_IO_PORTF 0xffff
 
 #define USE_I2C
+#define USE_I2C_DEVICE_0
+#define USE_I2C_DEVICE_1
+#define USE_I2C_DEVICE_2
+#define USE_I2C_DEVICE_3
 #define I2C_FULL_RECONFIGURABILITY
 
+#define USE_DSHOT
 #define USE_DSHOT_BITBAND
 
 #define USE_BEEPER
