@@ -305,7 +305,7 @@ static const OSD_Entry cmsx_menuBlackboxEntries[] =
     { "(STATUS)",    OME_String,  NULL,            &cmsx_BlackboxStatus },
     { "(USED)",      OME_String,  NULL,            &cmsx_BlackboxDeviceStorageUsed },
     { "(FREE)",      OME_String,  NULL,            &cmsx_BlackboxDeviceStorageFree },
-    { "DEBUG MODE",  OME_TAB | REBOOT_REQUIRED,     NULL,            &(OSD_TAB_t)   { &systemConfig_debug_mode, DEBUG_COUNT - 1, debugModeNames } },
+    { "DEBUG MODE",  OME_TAB | REBOOT_REQUIRED,     NULL,            &(OSD_TAB_t)   { (uint8_t *)&systemConfig_debug_mode, DEBUG_COUNT - 1, debugModeNames } },
 
 #ifdef USE_USB_MSC
     { "USB MASS STORAGE", OME_Submenu, cmsMenuChange, &cmsx_menuStorageDeviceCheck },
