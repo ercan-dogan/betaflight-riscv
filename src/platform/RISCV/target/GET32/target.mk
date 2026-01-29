@@ -19,7 +19,14 @@ INCLUDE_DIRS      := \
             $(TARGET_DIR)/include 
 			
 MCU_COMMON_SRC     = \
-            $(TARGET_DIR)/source/trap.S 
+            $(TARGET_DIR)/source/trap.S \
+            drivers/dshot_bitbang_decode.c \
+            drivers/inverter.c \
+            drivers/serial_pinconfig.c 
+            
+            
+SIZE_OPTIMISED_SRC += \
+            drivers/serial_pinconfig.c 
 			
 MCU_COMMON_SRC    += $(wildcard $(TARGET_DIR)/source/*.c)
 

@@ -32,9 +32,56 @@
 #define GET32
 #endif
 
-#undef USE_DMA
-//[ED] #define USE_VCP
+#undef  USE_DMA
+#undef  USE_VCP
 
+#define USE_EXTI
+
+#define USE_ADC
+#undef  USE_ADC_INTERNAL
+#undef  ADC_INTERNAL_VBAT4_ENABLED
+#undef  PLATFORM_TRAIT_ADC_DEVICE
+
+#undef  CONFIG_IN_EXTERNAL_FLASH
+#undef  CONFIG_IN_MEMORY_MAPPED_FLASH
+#undef  CONFIG_IN_RAM
+#undef  CONFIG_IN_SDCARD
+#undef  CONFIG_IN_FILE
+#define CONFIG_IN_FLASH
+#define FLASH_CONFIG_STREAMER_BUFFER_SIZE 64
+#define FLASH_CONFIG_BUFFER_TYPE uint32_t
+
+#define DEBUG_PIN_COUNT 4
+#define USE_DEBUG_PIN
+#undef  USE_PINIO
+
+#define USE_DSHOT
+#define USE_DSHOT_BITBANG
+#define USE_DSHOT_BITBAND
+#define BB_OUTPUT_BUFFER_ATTRIBUTE
+#define BB_INPUT_BUFFER_ATTRIBUTE
+#undef  USE_DSHOT_CACHE_MGMT
+
+#define USE_ESCSERIAL
+
+#define USE_I2C
+#undef  USE_SOFT_I2C
+#define USE_I2C_DEVICE_1
+#define USE_I2C_DEVICE_2
+#define USE_I2C_DEVICE_3
+#define USE_I2C_DEVICE_4
+
+#define USE_TIMER
+
+#define USE_SPI
+#define USE_SPI_DEVICE_1
+#define USE_SPI_DEVICE_2
+#define USE_SPI_DEVICE_3
+#define USE_SPI_DEVICE_4
+#undef  USE_SPI_DMA_ENABLE_EARLY
+#undef  USE_SPI_DMA_ENABLE_LATE
+
+#define USE_UART
 #define USE_UART1
 #define USE_UART2
 #define USE_UART3
@@ -42,43 +89,8 @@
 
 #define USE_INVERTER
 
-#define USE_SPI_DEVICE_1
-#define USE_SPI_DEVICE_2
-#define USE_SPI_DEVICE_3
-#define USE_SPI_DEVICE_4
-
-#define TARGET_IO_PORTA 0xffff
-#define TARGET_IO_PORTB 0xffff
-#define TARGET_IO_PORTC 0xffff
-#define TARGET_IO_PORTD 0xffff
-#define TARGET_IO_PORTE 0xffff
-#define TARGET_IO_PORTF 0xffff
-
-#define USE_I2C
-#define USE_I2C_DEVICE_0
-#define USE_I2C_DEVICE_1
-#define USE_I2C_DEVICE_2
-#define USE_I2C_DEVICE_3
-#define I2C_FULL_RECONFIGURABILITY
-
-#define USE_DSHOT
-#define USE_DSHOT_BITBAND
-
+#define USE_PWM_OUTPUT
+#define USE_SERVOS
 #define USE_BEEPER
 
-#define USE_SPI
-#define SPI_FULL_RECONFIGURABILITY
-#define USE_SPI_DMA_ENABLE_EARLY
-
-#define USE_USB_DETECT
-
-#define USE_ESCSERIAL
-
-#define USE_ADC
-
-#define USE_EXTI
-
-#define USE_PID_DENOM_CHECK
-#define USE_PID_DENOM_OVERCLOCK_LEVEL 2
-
-#define FLASH_PAGE_SIZE ((uint32_t)0x4000) // 16K sectors
+#define SERIAL_TRAIT_PIN_CONFIG 1
